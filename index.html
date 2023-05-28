@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Create a Test</h1>
+
+<form id="testForm">
+    <label for="id">Test ID:</label><br>
+    <input type="text" id="id" name="id"><br>
+    <label for="element">Element ID:</label><br>
+    <input type="text" id="element" name="element"><br>
+    <label for="variantA">Variant A:</label><br>
+    <input type="text" id="variantA" name="variantA"><br>
+    <label for="variantB">Variant B:</label><br>
+    <input type="text" id="variantB" name="variantB"><br>
+    <input type="submit" value="Submit">
+</form>
+
+<script>
+document.getElementById('testForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const id = document.getElementById('id').value;
+    const element = document.getElementById('element').value;
+    const variantA = document.getElementById('variantA').value;
+    const variantB = document.getElementById('variantB').value;
+
+    fetch('/tests', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            id: id,
+            element: element,
+            variantA: variantA,
+            variantB: variantB,
+        }),
+    });
+});
+</script>
+
+</body>
+</html>
