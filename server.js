@@ -40,11 +40,11 @@ app.put('/tests/:id', (req, res) => {
 });
 
 // Serve static files from the "public" directory
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'maxconversion', 'public')));
 
 // Route handler for the root URL ("/")
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'maxconversion', 'public', 'index.html'));
 });
 
 const port = process.env.PORT || 3000;
