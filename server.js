@@ -39,7 +39,7 @@ app.put('/tests/:id', (req, res) => {
   }
 });
 
-// Serve static files from the "public" directory
+// Serve static files from the "maxconversion/public" directory
 app.use(express.static(path.join(__dirname, 'maxconversion', 'public')));
 
 // Route handler for the root URL ("/")
