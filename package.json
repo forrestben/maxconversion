@@ -5,6 +5,9 @@
   "scripts": {
     "start": "node server.js"
   },
-  "author": " Forrest McCall",
-  "license": "MIT"
+  "author": "Forrest McCall",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
