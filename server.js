@@ -25,10 +25,9 @@ app.put('/tests/:id', (req, res) => {
     tests = tests.map(test => {
         if (test.id === id) {
             wasUpdated = true;
-            return updatedTest;
-        } else {
-            return test;
+            test = updatedTest;
         }
+        return test;
     });
 
     if (wasUpdated) {
