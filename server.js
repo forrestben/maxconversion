@@ -1,4 +1,6 @@
 const express = require('express');
+const path = require('path');
+
 const app = express();
 app.use(express.json());
 
@@ -37,9 +39,12 @@ app.put('/tests/:id', (req, res) => {
   }
 });
 
+// Serve static files from the "public" directory
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Route handler for the root URL ("/")
 app.get('/', (req, res) => {
-  res.send('Welcome to the MaxConversion app!');
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 const port = process.env.PORT || 3000;
