@@ -6,37 +6,38 @@ let tests = [];
 
 // Create a new test
 app.post('/tests', (req, res) => {
-    const test = req.body;
-    tests.push(test);
-    res.status(201).send();
+  const test = req.body;
+  tests.push(test);
+  res.status(201).send();
 });
 
 // Get a list of all tests
 app.get('/tests', (req, res) => {
-    res.json(tests);
+  res.json(tests);
 });
 
 // Update a test
 app.put('/tests/:id', (req, res) => {
-    const id = req.params.id;
-    const updatedTest = req.body;
+  const id = req.params.id;
+  const updatedTest = req.body;
 
-    let wasUpdated = false;
-    tests = tests.map(test => {
-        if (test.id === id) {
-            wasUpdated = true;
-            test = updatedTest;
-        }
-        return test;
-    });
-
-    if (wasUpdated) {
-        res.send();
-    } else {
-        res.status(404).send();
+  let wasUpdated = false;
+  tests = tests.map(test => {
+    if (test.id === id) {
+      wasUpdated = true;
+      test = updatedTest;
     }
+    return test;
+  });
+
+  if (wasUpdated) {
+    res.send();
+  } else {
+    res.status(404).send();
+  }
 });
 
-app.listen(3000, () => {
-    console.log('Server is up and running');
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Server is up and running on port ${port}`);
 });
