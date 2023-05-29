@@ -37,6 +37,11 @@ app.put('/tests/:id', (req, res) => {
   }
 });
 
+// Route handler for the root URL ("/")
+app.get('/', (req, res) => {
+  res.send('Welcome to the MaxConversion app!');
+});
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server is up and running on port ${port}`);
