@@ -33,8 +33,10 @@
 
       // Wait for the iframe to load the content
       iframe.onload = function() {
+        const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+
         // Capture the screenshot of the iframe
-        html2canvas(iframe.contentDocument.documentElement).then(canvas => {
+        html2canvas(iframeDocument.documentElement).then(canvas => {
           // Create an image element to display the screenshot
           const screenshotImg = document.createElement('img');
           screenshotImg.src = canvas.toDataURL('image/png');
