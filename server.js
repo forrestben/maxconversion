@@ -39,8 +39,8 @@ app.put('/tests/:id', (req, res) => {
   }
 });
 
-// Serve static files from the "public" directory
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve the static files from the "public" directory
+app.use(express.static('public'));
 
 // Route handler for the root URL ("/")
 app.get('/', (req, res) => {
