@@ -1,23 +1,79 @@
-// Add an event listener to the iframe load event
-iframe.addEventListener('load', function() {
-  // Access the iframe's content window
-  const iframeWindow = iframe.contentWindow;
+// Global variables to store the selected element and its original styling
+let selectedElement = null;
+let originalStyling = null;
 
-  // Add an event listener to the iframe's document
-  iframeWindow.document.addEventListener('click', function(event) {
-    // Get the target element that was clicked
-    const targetElement = event.target;
+// Function to handle element selection and display
+function handleElementSelection(event) {
+  const iframe = document.getElementById('screenshotFrame');
+  const iframeDocument = iframe.contentWindow.document;
+  const targetElement = event.target;
 
-    // Perform your desired actions or edits on the target element
-    // For example, you can change its style or content
-    targetElement.style.backgroundColor = 'red';
-    targetElement.textContent = 'Edited Element';
+  // Remove any existing selection
+  if (selectedElement) {
+    selectedElement.classList.remove('selected-element');
+    selectedElement.style.cssText = originalStyling;
+  }
 
-    // Send the edited element back to your server for processing or storage
-    // You can use AJAX or other methods to send the data
+  // Store the selected element and its original styling
+  selectedElement = targetElement;
+  originalStyling = targetElement.style.cssText;
 
-    // Prevent the default behavior of the click event
-    event.preventDefault();
-    event.stopPropagation();
-  });
-});
+  // Apply the selection styling
+  selectedElement.classList.add('selected-element');
+
+  // Display the selected element information
+  const elementContainer = document.getElementById('elementContainer');
+  elementContainer.textContent = `Selected Element: ${targetElement.tagName}`;
+}
+
+// Function to handle styling form submission
+function handleStylingFormSubmit(event) {
+  event.preventDefault();
+  const propertySelect = document.getElementById('propertySelect');
+  const selectedProperty = propertySelect.value;
+
+  // Get the selected property input value
+  let stylingValue = null;
+  if (selectedProperty === 'background-color') {
+    const backgroundColorInput = document.getElementById('backgroundColorInput');
+    stylingValue = backgroundColorInput.value;
+  } else if (selectedProperty === 'color') {
+    const colorInput = document.getElementById('colorInput');
+    stylingValue = colorInput.value;
+  } else if (selectedProperty === 'border-radius') {
+    const borderRadiusInput = document.getElementById('borderRadiusInput');
+    stylingValue = borderRadiusInput.value;
+  }
+
+  // Apply the styling to the selected element within the iframe
+  if (selectedElement && stylingValue !== null) {
+    selectedElement.style[selectedProperty] = stylingValue;
+  }
+}
+
+// Function to load the screenshot
+function loadScreenshot(url) {
+  const iframe = document.createElement('iframe');
+  iframe.id = 'screenshotFrame';
+  iframe.src = url;
+  iframe.onload = () => {
+    const iframeDocument = iframe.contentWindow.document;
+    iframeDocument.body.addEventListener('click', handleElementSelection);
+  };
+
+  const screenshotContainer = document.getElementById('screenshotContainer');
+  screenshotContainer.innerHTML = '';
+  screenshotContainer.appendChild(iframe);
+}
+
+// Function to handle URL form submission
+function handleUrlFormSubmit(event) {
+  event.preventDefault();
+  const urlInput = document.getElementById('urlInput');
+  const url = urlInput.value;
+  loadScreenshot(url);
+}
+
+// Add event listeners
+document.getElementById('urlForm').addEventListener('submit', handleUrlFormSubmit);
+document.getElementById('stylingForm').addEventListener('submit', handleStylingFormSubmit);
