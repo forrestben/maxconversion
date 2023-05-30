@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <head>
   <title>A/B Testing Interface</title>
   <style>
@@ -17,44 +16,46 @@
   <div id="screenshotContainer">
     <!-- Screenshot will be loaded here -->
   </div>
-<script>
-  // Capture the screenshot and enable element selection
-function captureScreenshot() {
-  const url = document.getElementById('url-input').value;
 
-  html2canvas(document.body).then(canvas => {
-    const screenshotUrl = canvas.toDataURL('image/png');
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script>
+    // Capture the screenshot and enable element selection
+    function captureScreenshot() {
+      const url = document.getElementById('urlInput').value;
 
-    // Display the screenshot on the interface
-    const screenshotImg = document.createElement('img');
-    screenshotImg.src = screenshotUrl;
-    document.getElementById('screenshot-container').appendChild(screenshotImg);
+      html2canvas(document.body).then(canvas => {
+        const screenshotUrl = canvas.toDataURL('image/png');
 
-    // Enable element selection on the screenshot
-    screenshotImg.addEventListener('click', handleElementSelection);
-  });
-}
+        // Display the screenshot on the interface
+        const screenshotImg = document.createElement('img');
+        screenshotImg.src = screenshotUrl;
+        document.getElementById('screenshotContainer').appendChild(screenshotImg);
 
-// Handle element selection on the screenshot
-function handleElementSelection(event) {
-  const clickedX = event.clientX;
-  const clickedY = event.clientY;
+        // Enable element selection on the screenshot
+        screenshotImg.addEventListener('click', handleElementSelection);
+      });
+    }
 
-  // Use the clicked coordinates to identify the element on the screenshot
-  // You can use techniques like elementFromPoint, getBoundingClientRect, or other methods to determine the element
+    // Handle element selection on the screenshot
+    function handleElementSelection(event) {
+      const clickedX = event.clientX;
+      const clickedY = event.clientY;
 
-  // Perform any necessary actions or tests on the selected element
-  // For example, you can highlight the element or trigger a test
+      // Use the clicked coordinates to identify the element on the screenshot
+      // You can use techniques like elementFromPoint, getBoundingClientRect, or other methods to determine the element
 
-  // Add your logic here to handle the selected element
-}
+      // Perform any necessary actions or tests on the selected element
+      // For example, you can highlight the element or trigger a test
 
-// Add an event listener to the form submission
-document.getElementById('url-form').addEventListener('submit', event => {
-  event.preventDefault();
-  captureScreenshot();
-});
-</script>
+      // Add your logic here to handle the selected element
+    }
+
+    // Add an event listener to the form submission
+    document.getElementById('urlForm').addEventListener('submit', event => {
+      event.preventDefault();
+      captureScreenshot();
+    });
+  </script>
   
   <script src="maxconversion.js"></script>
   <script src="app.js"></script>
