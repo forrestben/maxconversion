@@ -23,9 +23,11 @@
 function captureScreenshot() {
   const url = document.getElementById('urlInput').value;
   
-  // Create an iframe and load the live website
+   // Create an iframe and load the live website
   const iframe = document.createElement('iframe');
   iframe.src = url;
+  iframe.style.width = '100%';
+  iframe.style.height = '600px'; // Adjust the height as needed
   iframe.onload = () => {
     // Enable element selection on the loaded website
     iframe.contentWindow.document.documentElement.addEventListener('click', handleElementSelection);
