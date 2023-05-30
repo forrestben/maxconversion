@@ -16,29 +16,35 @@
     <!-- Screenshot will be loaded here -->
   </div>
 
-  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+ <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <script>
     // Capture the screenshot and enable element selection
-    // Capture the screenshot and enable element selection
-function captureScreenshot() {
-  const url = document.getElementById('urlInput').value;
+    function captureScreenshot() {
+      const url = document.getElementById('urlInput').value;
 
-  // Load the screenshot of the entered URL
-  html2canvas(document.querySelector('#screenshotContainer'), {
-    useCORS: true, // Enable CORS for capturing cross-origin screenshots
-  }).then(canvas => {
-    const screenshotUrl = canvas.toDataURL('image/png');
+      // Create an iframe to load the specified URL
+      const iframe = document.createElement('iframe');
+      iframe.src = url;
+      iframe.style.visibility = 'hidden';
+      document.body.appendChild(iframe);
 
-    // Display the screenshot on the interface
-    const screenshotImg = document.createElement('img');
-    screenshotImg.src = screenshotUrl;
-    document.getElementById('screenshotContainer').appendChild(screenshotImg);
+      // Wait for the iframe to load
+      iframe.onload = function() {
+        // Capture the screenshot of the iframe contents
+        html2canvas(iframe.contentDocument.body).then(canvas => {
+          // Display the screenshot on the interface
+          const screenshotImg = document.createElement('img');
+          screenshotImg.src = canvas.toDataURL('image/png');
+          document.getElementById('screenshotContainer').appendChild(screenshotImg);
 
-    // Enable element selection on the screenshot
-    screenshotImg.addEventListener('click', handleElementSelection);
-  });
-}
+          // Enable element selection on the screenshot
+          screenshotImg.addEventListener('click', handleElementSelection);
 
+          // Remove the iframe from the DOM
+          document.body.removeChild(iframe);
+        });
+      };
+    }
 
     // Handle element selection on the screenshot
     function handleElementSelection(event) {
