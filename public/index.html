@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>A/B Testing Interface</title>
+  <title>MaxConversion App</title>
   <style>
     /* Add necessary styles */
   </style>
 </head>
 <body>
-  <h1>A/B Testing Interface</h1>
+  <h1>MaxConversion App</h1>
   <form id="urlForm">
     <label for="urlInput">Enter URL:</label>
     <input type="text" id="urlInput" required>
@@ -16,42 +16,33 @@
   <div id="screenshotContainer">
     <!-- Screenshot will be loaded here -->
   </div>
-  <script>
-    // Capture the live website and enable element selection
-function captureScreenshot() {
-  const url = document.getElementById('urlInput').value;
-  
-   // Create an iframe and load the live website
-  const iframe = document.createElement('iframe');
-  iframe.src = url;
-  iframe.style.width = '100%';
-  iframe.style.height = '700px'; // Adjust the height as needed
-  iframe.onload = () => {
-    // Enable element selection on the loaded website
-    iframe.contentWindow.document.documentElement.addEventListener('click', handleElementSelection);
-  };
-  
-  // Display the iframe on the interface
-  const screenshotContainer = document.getElementById('screenshotContainer');
-  screenshotContainer.innerHTML = '';
-  screenshotContainer.appendChild(iframe);
-}
+  <div id="elementContainer">
+    <!-- Selected element will be displayed here -->
+  </div>
+  <form id="stylingForm">
+    <label for="propertySelect">Select Property:</label>
+    <select id="propertySelect">
+      <option value="background-color">Background Color</option>
+      <option value="color">Text Color</option>
+      <option value="border-radius">Border Radius</option>
+    </select>
+    <div id="stylingOptions">
+      <div id="backgroundColorOption" class="styling-option">
+        <label for="backgroundColorInput">Background Color:</label>
+        <input type="text" id="backgroundColorInput" placeholder="Enter hex code">
+      </div>
+      <div id="colorOption" class="styling-option">
+        <label for="colorInput">Text Color:</label>
+        <input type="text" id="colorInput" placeholder="Enter hex code">
+      </div>
+      <div id="borderRadiusOption" class="styling-option">
+        <label for="borderRadiusInput">Border Radius:</label>
+        <input type="text" id="borderRadiusInput" placeholder="Enter padding amount">
+      </div>
+    </div>
+    <button type="submit">Apply Styling</button>
+  </form>
 
-// Handle element selection on the live website
-function handleElementSelection(event) {
-  const clickedElement = event.target;
-  
-  // Perform any necessary actions or tests on the selected element
-  // For example, you can highlight the element or trigger a test
-  
-  // Add your logic here to handle the selected element
-}
-
-    // Add an event listener to the form submission
-    document.getElementById('urlForm').addEventListener('submit', event => {
-      event.preventDefault();
-      captureScreenshot();
-    });
-  </script>
+  <script src="maxconversion.js"></script>
 </body>
 </html>
