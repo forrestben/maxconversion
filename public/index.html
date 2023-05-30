@@ -19,52 +19,33 @@
 
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <script>
-    // Capture the screenshot and enable element selection
-    function captureScreenshot() {
-      const url = document.getElementById('urlInput').value;
+    // Capture the live website and enable element selection
+function captureScreenshot() {
+  const url = document.getElementById('urlInput').value;
+  
+  // Create an iframe and load the live website
+  const iframe = document.createElement('iframe');
+  iframe.src = url;
+  iframe.onload = () => {
+    // Enable element selection on the loaded website
+    iframe.contentWindow.document.documentElement.addEventListener('click', handleElementSelection);
+  };
+  
+  // Display the iframe on the interface
+  const screenshotContainer = document.getElementById('screenshotContainer');
+  screenshotContainer.innerHTML = '';
+  screenshotContainer.appendChild(iframe);
+}
 
-      // Create a new iframe
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
-      document.body.appendChild(iframe);
-
-      // Load the specified URL in the iframe
-      iframe.src = url;
-
-      // Wait for the iframe to load the content
-      iframe.onload = function() {
-        const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
-
-        // Capture the screenshot of the iframe
-        html2canvas(iframeDocument.documentElement).then(canvas => {
-          // Create an image element to display the screenshot
-          const screenshotImg = document.createElement('img');
-          screenshotImg.src = canvas.toDataURL('image/png');
-
-          // Display the screenshot on the interface
-          const screenshotContainer = document.getElementById('screenshotContainer');
-          screenshotContainer.innerHTML = '';
-          screenshotContainer.appendChild(screenshotImg);
-
-          // Enable element selection on the screenshot
-          screenshotImg.addEventListener('click', handleElementSelection);
-        });
-      };
-    }
-
-    // Handle element selection on the screenshot
-    function handleElementSelection(event) {
-      const clickedX = event.clientX;
-      const clickedY = event.clientY;
-
-      // Use the clicked coordinates to identify the element on the screenshot
-      // You can use techniques like elementFromPoint, getBoundingClientRect, or other methods to determine the element
-
-      // Perform any necessary actions or tests on the selected element
-      // For example, you can highlight the element or trigger a test
-
-      // Add your logic here to handle the selected element
-    }
+// Handle element selection on the live website
+function handleElementSelection(event) {
+  const clickedElement = event.target;
+  
+  // Perform any necessary actions or tests on the selected element
+  // For example, you can highlight the element or trigger a test
+  
+  // Add your logic here to handle the selected element
+}
 
     // Add an event listener to the form submission
     document.getElementById('urlForm').addEventListener('submit', event => {
