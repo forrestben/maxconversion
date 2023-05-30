@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html>
 <head>
   <title>A/B Testing Interface</title>
   <style>
@@ -16,32 +17,35 @@
     <!-- Screenshot will be loaded here -->
   </div>
 
- <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <script>
     // Capture the screenshot and enable element selection
     function captureScreenshot() {
       const url = document.getElementById('urlInput').value;
 
-      // Create an iframe to load the specified URL
+      // Create a new iframe
       const iframe = document.createElement('iframe');
-      iframe.src = url;
-      iframe.style.visibility = 'hidden';
+      iframe.style.display = 'none';
       document.body.appendChild(iframe);
 
-      // Wait for the iframe to load
+      // Load the specified URL in the iframe
+      iframe.src = url;
+
+      // Wait for the iframe to load the content
       iframe.onload = function() {
-        // Capture the screenshot of the iframe contents
-        html2canvas(iframe.contentDocument.body).then(canvas => {
-          // Display the screenshot on the interface
+        // Capture the screenshot of the iframe
+        html2canvas(iframe.contentDocument.documentElement).then(canvas => {
+          // Create an image element to display the screenshot
           const screenshotImg = document.createElement('img');
           screenshotImg.src = canvas.toDataURL('image/png');
-          document.getElementById('screenshotContainer').appendChild(screenshotImg);
+
+          // Display the screenshot on the interface
+          const screenshotContainer = document.getElementById('screenshotContainer');
+          screenshotContainer.innerHTML = '';
+          screenshotContainer.appendChild(screenshotImg);
 
           // Enable element selection on the screenshot
           screenshotImg.addEventListener('click', handleElementSelection);
-
-          // Remove the iframe from the DOM
-          document.body.removeChild(iframe);
         });
       };
     }
@@ -66,8 +70,5 @@
       captureScreenshot();
     });
   </script>
-  
-  <script src="maxconversion.js"></script>
-  <script src="app.js"></script>
 </body>
 </html>
