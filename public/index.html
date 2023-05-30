@@ -19,21 +19,26 @@
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <script>
     // Capture the screenshot and enable element selection
-    function captureScreenshot() {
-      const url = document.getElementById('urlInput').value;
+    // Capture the screenshot and enable element selection
+function captureScreenshot() {
+  const url = document.getElementById('urlInput').value;
 
-      html2canvas(document.body).then(canvas => {
-        const screenshotUrl = canvas.toDataURL('image/png');
+  // Load the screenshot of the entered URL
+  html2canvas(document.querySelector('#screenshotContainer'), {
+    useCORS: true, // Enable CORS for capturing cross-origin screenshots
+  }).then(canvas => {
+    const screenshotUrl = canvas.toDataURL('image/png');
 
-        // Display the screenshot on the interface
-        const screenshotImg = document.createElement('img');
-        screenshotImg.src = screenshotUrl;
-        document.getElementById('screenshotContainer').appendChild(screenshotImg);
+    // Display the screenshot on the interface
+    const screenshotImg = document.createElement('img');
+    screenshotImg.src = screenshotUrl;
+    document.getElementById('screenshotContainer').appendChild(screenshotImg);
 
-        // Enable element selection on the screenshot
-        screenshotImg.addEventListener('click', handleElementSelection);
-      });
-    }
+    // Enable element selection on the screenshot
+    screenshotImg.addEventListener('click', handleElementSelection);
+  });
+}
+
 
     // Handle element selection on the screenshot
     function handleElementSelection(event) {
