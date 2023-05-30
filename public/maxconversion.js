@@ -11,12 +11,11 @@ function handleElementSelection(event) {
   // Remove any existing selection
   if (selectedElement) {
     selectedElement.classList.remove('selected-element');
-    selectedElement.style.cssText = originalStyling;
   }
 
   // Store the selected element and its original styling
   selectedElement = targetElement;
-  originalStyling = targetElement.style.cssText;
+  originalStyling = targetElement.getAttribute('style') || '';
 
   // Apply the selection styling
   selectedElement.classList.add('selected-element');
@@ -53,17 +52,8 @@ function handleStylingFormSubmit(event) {
 
 // Function to load the screenshot
 function loadScreenshot(url) {
-  const iframe = document.createElement('iframe');
-  iframe.id = 'screenshotFrame';
+  const iframe = document.getElementById('screenshotFrame');
   iframe.src = url;
-  iframe.onload = () => {
-    const iframeDocument = iframe.contentWindow.document;
-    iframeDocument.body.addEventListener('click', handleElementSelection);
-  };
-
-  const screenshotContainer = document.getElementById('screenshotContainer');
-  screenshotContainer.innerHTML = '';
-  screenshotContainer.appendChild(iframe);
 }
 
 // Function to handle URL form submission
