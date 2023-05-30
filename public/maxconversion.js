@@ -1,24 +1,18 @@
-const express = require('express');
-const app = express();
-const path = require('path');
+// Your maxconversion.js code for browser execution
+// Modify the code as per your requirements
 
-app.use(express.json());
-
-// Serve static files from the "public" directory
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Route handler for the root URL ("/")
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// Example: Accessing the DOM
+document.addEventListener('DOMContentLoaded', () => {
+  // Your code here for manipulating the DOM or interacting with elements
 });
 
-// Set the MIME type for JavaScript files
-app.get('/maxconversion.js', (req, res) => {
-  res.setHeader('Content-Type', 'application/javascript');
-  res.sendFile(path.join(__dirname, 'public', 'maxconversion.js'));
-});
-
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server is up and running on port ${port}`);
-});
+// Example: Making an AJAX request
+const xhr = new XMLHttpRequest();
+xhr.open('GET', '/api/data', true);
+xhr.onload = () => {
+  if (xhr.status === 200) {
+    const response = JSON.parse(xhr.responseText);
+    // Your code here for handling the response
+  }
+};
+xhr.send();
