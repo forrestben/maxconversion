@@ -25,7 +25,7 @@ function captureScreenshot() {
   const iframe = document.createElement('iframe');
   iframe.src = url;
   iframe.style.width = '100%';
-  iframe.style.height = '80%'; // Adjust the height as needed
+  iframe.style.height = '700px'; // Adjust the height as needed
   iframe.onload = () => {
     // Enable element selection on the loaded website
     iframe.contentWindow.document.documentElement.addEventListener('click', handleElementSelection);
