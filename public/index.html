@@ -13,49 +13,60 @@
     <input type="text" id="urlInput" required>
     <button type="submit">Load Screenshot</button>
   </form>
-  <div id="screenshotContainer">
-    <iframe id="screenshotFrame"></iframe>
-  </div>
+  <div id="screenshotContainer"></div>
   <div id="stylingForm">
     <h2>Styling Options</h2>
-    <label for="elementSelect">Select Element:</label>
-    <select id="elementSelect">
-      <!-- Populate options dynamically based on elements in the screenshot -->
+    <label for="styleSelect">Select Style:</label>
+    <select id="styleSelect">
+      <option value="backgroundColor">Background Color</option>
+      <option value="color">Color</option>
+      <option value="borderRadius">Border Radius</option>
     </select>
-    <label for="backgroundColorInput">Background Color:</label>
-    <input type="color" id="backgroundColorInput">
+    <label for="hexInput">Enter Hex Code:</label>
+    <input type="text" id="hexInput">
     <button id="applyStylingBtn">Apply Styling</button>
   </div>
+  <div id="successMessage" style="display: none;">Styling changes applied successfully!</div>
 
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <script>
-    // Capture the screenshot and load it into the iframe
-    function captureScreenshot() {
+    // Capture the screenshot and render the webpage content
+    async function captureScreenshot() {
       const url = document.getElementById('urlInput').value;
-      const screenshotFrame = document.getElementById('screenshotFrame');
+      const response = await fetch(url);
+      const htmlContent = await response.text();
 
-      screenshotFrame.src = url;
+      const screenshotContainer = document.getElementById('screenshotContainer');
+      screenshotContainer.innerHTML = htmlContent;
+
+      // Enable element selection on the rendered webpage content
+      const elements = screenshotContainer.getElementsByTagName('*');
+      for (let i = 0; i < elements.length; i++) {
+        elements[i].addEventListener('click', handleElementSelection);
+      }
     }
-
-    // Disable click events within the iframe
-function disableIframeClicks(event) {
-  const iframeDocument = event.target.contentDocument;
-
-  iframeDocument.addEventListener('click', (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-  });
-}
-
 
     // Handle element selection and apply styling changes
     function handleElementSelection(event) {
-      const selectedElementId = event.target.value;
-      // Perform styling changes on the selected element
-      // Replace this with your own logic to apply styling changes
+      const selectedElement = event.target;
 
-      // Placeholder log message
-      console.log(`Selected element ID: ${selectedElementId}`);
+      // Apply styling changes based on selected option and hex code
+      const styleSelect = document.getElementById('styleSelect');
+      const selectedStyle = styleSelect.value;
+      const hexInput = document.getElementById('hexInput');
+      const hexCode = hexInput.value;
+
+      selectedElement.style[selectedStyle] = hexCode;
+
+      // Send a message to the backend server to apply the styling changes on the live site
+      // You need to implement the logic to send a request to the backend server here
+
+      // Optional: Display a success message
+      const successMessage = document.getElementById('successMessage');
+      successMessage.style.display = 'block';
+      setTimeout(() => {
+        successMessage.style.display = 'none';
+      }, 3000);
     }
 
     // Add an event listener to the form submission
@@ -66,34 +77,12 @@ function disableIframeClicks(event) {
 
     // Add an event listener to the Apply Styling button
     document.getElementById('applyStylingBtn').addEventListener('click', function () {
-      const elementSelect = document.getElementById('elementSelect');
-      const selectedElementId = elementSelect.value;
-      const backgroundColorInput = document.getElementById('backgroundColorInput');
-      const backgroundColor = backgroundColorInput.value;
-
-      // Make an HTTP request to your backend API to apply styling changes
-      // Replace the URL with your backend API endpoint
-      fetch('/update-styling', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          elementId: selectedElementId,
-          backgroundColor: backgroundColor,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log('Styling changes applied successfully');
-        })
-        .catch((error) => {
-          console.error('Failed to apply styling changes:', error);
-        });
+      const screenshotContainer = document.getElementById('screenshotContainer');
+      const selectedElement = screenshotContainer.querySelector(':hover');
+      if (selectedElement) {
+        handleElementSelection({ target: selectedElement });
+      }
     });
-
-    // Add an event listener to the iframe load event
-    document.getElementById('screenshotFrame').addEventListener('load', disableIframeClicks);
   </script>
 </body>
 </html>
