@@ -56,18 +56,20 @@
     });
 
     // Add an event listener to the Apply Styling button
-    document.getElementById('applyStylingBtn').addEventListener('click', function () {
-      const screenshotFrame = document.getElementById('screenshotFrame');
-      const iframeWindow = screenshotFrame.contentWindow;
+document.getElementById('applyStylingBtn').addEventListener('click', function () {
+  const screenshotFrame = document.getElementById('screenshotFrame');
 
-      iframeWindow.addEventListener('click', function (event) {
-        const selectedElement = event.target;
+  screenshotFrame.contentWindow.document.addEventListener('click', function (event) {
+    event.preventDefault(); // Prevent navigation
 
-        if (selectedElement) {
-          handleElementSelection(selectedElement);
-        }
-      });
-    });
+    const selectedElement = event.target;
+
+    if (selectedElement) {
+      handleElementSelection(selectedElement);
+    }
+  });
+});
+
   </script>
 </body>
 </html>
