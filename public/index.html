@@ -30,11 +30,15 @@
   </div>
 
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script src="app.js"></script>
   <script>
+    const screenshotFrame = document.getElementById('screenshotFrame');
+    const styleSelect = document.getElementById('styleSelect');
+    const hexInput = document.getElementById('hexInput');
+
     // Capture the screenshot and enable element selection
     function captureScreenshot() {
       const url = document.getElementById('urlInput').value;
-      const screenshotFrame = document.getElementById('screenshotFrame');
 
       screenshotFrame.src = url;
 
@@ -48,9 +52,7 @@
       const selectedElement = event.target;
 
       // Apply styling changes based on selected option and hex code
-      const styleSelect = document.getElementById('styleSelect');
       const selectedStyle = styleSelect.value;
-      const hexInput = document.getElementById('hexInput');
       const hexCode = hexInput.value;
 
       selectedElement.style[selectedStyle] = hexCode;
@@ -75,14 +77,11 @@
 
     // Add an event listener to the Apply Styling button
     document.getElementById('applyStylingBtn').addEventListener('click', function () {
-      const screenshotFrame = document.getElementById('screenshotFrame');
       const selectedElement = screenshotFrame.contentWindow.document.querySelector(':hover');
       if (selectedElement) {
         handleElementSelection({ target: selectedElement });
       }
     });
-    
-
   </script>
 </body>
 </html>
