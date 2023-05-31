@@ -38,16 +38,15 @@
     }
 
     // Disable click events within the iframe
-    function disableIframeClicks(event) {
-      const iframeDocument = event.target.contentDocument;
-      const elements = iframeDocument.querySelectorAll('button, input[type="submit"], a, img');
+function disableIframeClicks(event) {
+  const iframeDocument = event.target.contentDocument;
 
-      elements.forEach((element) => {
-        element.addEventListener('click', (event) => {
-          event.preventDefault();
-        });
-      });
-    }
+  iframeDocument.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+  });
+}
+
 
     // Handle element selection and apply styling changes
     function handleElementSelection(event) {
