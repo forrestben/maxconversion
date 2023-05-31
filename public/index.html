@@ -1,14 +1,9 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <title>A/B Testing Interface</title>
   <style>
-   
     /* Add necessary styles */
-    #screenshotFrame {
-      width: 100%;
-      height: 600px; /* Adjust the height as needed */
-    }
   </style>
 </head>
 <body>
@@ -18,7 +13,7 @@
     <input type="text" id="urlInput" required>
     <button type="submit">Load Screenshot</button>
   </form>
-<div id="screenshotContainer">
+  <div id="screenshotContainer">
     <iframe id="screenshotFrame" sandbox="allow-scripts allow-same-origin"></iframe>
   </div>
   <div id="stylingForm">
@@ -42,14 +37,6 @@
       const screenshotFrame = document.getElementById('screenshotFrame');
 
       screenshotFrame.src = url;
-
-      screenshotFrame.onload = function () {
-        const iframeDocument = screenshotFrame.contentDocument || screenshotFrame.contentWindow.document;
-        iframeDocument.addEventListener('click', function (event) {
-          event.preventDefault();
-          handleElementSelection(event.target);
-        });
-      };
     }
 
     // Handle element selection and apply styling changes
@@ -71,12 +58,15 @@
     // Add an event listener to the Apply Styling button
     document.getElementById('applyStylingBtn').addEventListener('click', function () {
       const screenshotFrame = document.getElementById('screenshotFrame');
-      const iframeDocument = screenshotFrame.contentDocument || screenshotFrame.contentWindow.document;
-      const selectedElement = iframeDocument.querySelector(':hover');
+      const iframeWindow = screenshotFrame.contentWindow;
 
-      if (selectedElement) {
-        handleElementSelection(selectedElement);
-      }
+      iframeWindow.addEventListener('click', function (event) {
+        const selectedElement = event.target;
+
+        if (selectedElement) {
+          handleElementSelection(selectedElement);
+        }
+      });
     });
   </script>
 </body>
