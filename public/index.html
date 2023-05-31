@@ -20,9 +20,9 @@
     <h2>Styling Options</h2>
     <label for="styleSelect">Select Style:</label>
     <select id="styleSelect">
-      <option value="background-color">Background Color</option>
+      <option value="backgroundColor">Background Color</option>
       <option value="color">Color</option>
-      <option value="border-radius">Border Radius</option>
+      <option value="borderRadius">Border Radius</option>
     </select>
     <label for="hexInput">Enter Hex Code:</label>
     <input type="text" id="hexInput">
@@ -43,7 +43,7 @@
       };
     }
 
-    // Handle element selection and apply styling changes
+    // Handle element selection and apply styling changes within the iframe
     function handleElementSelection(event) {
       const selectedElement = event.target;
 
@@ -54,6 +54,17 @@
       const hexCode = hexInput.value;
 
       selectedElement.style[selectedStyle] = hexCode;
+
+      // Send a message to the parent window to apply the styling changes
+      window.parent.postMessage(
+        {
+          type: 'stylingChange',
+          elementId: selectedElement.id,
+          style: selectedStyle,
+          value: hexCode,
+        },
+        '*'
+      );
     }
 
     // Add an event listener to the form submission
