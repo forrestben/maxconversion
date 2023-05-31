@@ -1,69 +1,48 @@
-// Global variables to store the selected element and its original styling
-let selectedElement = null;
-let originalStyling = null;
+// maxconversion.js
 
-// Function to handle element selection and display
-function handleElementSelection(event) {
-  const iframe = document.getElementById('screenshotFrame');
-  const iframeDocument = iframe.contentWindow.document;
-  const targetElement = event.target;
-
-  // Remove any existing selection
-  if (selectedElement) {
-    selectedElement.classList.remove('selected-element');
+// Example code for the live external site
+window.addEventListener('message', function (event) {
+  const message = event.data;
+  if (message.type === 'stylingChange') {
+    const element = document.getElementById(message.elementId);
+    if (element) {
+      element.style[message.style] = message.value;
+    }
   }
+});
 
-  // Store the selected element and its original styling
-  selectedElement = targetElement;
-  originalStyling = targetElement.getAttribute('style') || '';
-
-  // Apply the selection styling
-  selectedElement.classList.add('selected-element');
-
-  // Display the selected element information
-  const elementContainer = document.getElementById('elementContainer');
-  elementContainer.textContent = `Selected Element: ${targetElement.tagName}`;
+// Function to send styling change message to the parent window
+function sendStylingChange(elementId, style, value) {
+  const message = {
+    type: 'stylingChange',
+    elementId,
+    style,
+    value
+  };
+  parent.postMessage(message, '*');
 }
 
-// Function to handle styling form submission
-function handleStylingFormSubmit(event) {
-  event.preventDefault();
-  const propertySelect = document.getElementById('propertySelect');
-  const selectedProperty = propertySelect.value;
-
-  // Get the selected property input value
-  let stylingValue = null;
-  if (selectedProperty === 'background-color') {
-    const backgroundColorInput = document.getElementById('backgroundColorInput');
-    stylingValue = backgroundColorInput.value;
-  } else if (selectedProperty === 'color') {
-    const colorInput = document.getElementById('colorInput');
-    stylingValue = colorInput.value;
-  } else if (selectedProperty === 'border-radius') {
-    const borderRadiusInput = document.getElementById('borderRadiusInput');
-    stylingValue = borderRadiusInput.value;
-  }
-
-  // Apply the styling to the selected element within the iframe
-  if (selectedElement && stylingValue !== null) {
-    selectedElement.style[selectedProperty] = stylingValue;
-  }
+// Example function to apply background color change
+function applyBackgroundColor() {
+  const elementId = 'element-id'; // Replace with the actual element ID
+  const color = document.getElementById('background-color-input').value;
+  sendStylingChange(elementId, 'background-color', color);
 }
 
-// Function to load the screenshot
-function loadScreenshot(url) {
-  const iframe = document.getElementById('screenshotFrame');
-  iframe.src = url;
+// Example function to apply text color change
+function applyTextColor() {
+  const elementId = 'element-id'; // Replace with the actual element ID
+  const color = document.getElementById('text-color-input').value;
+  sendStylingChange(elementId, 'color', color);
 }
 
-// Function to handle URL form submission
-function handleUrlFormSubmit(event) {
-  event.preventDefault();
-  const urlInput = document.getElementById('urlInput');
-  const url = urlInput.value;
-  loadScreenshot(url);
+// Example function to apply border radius change
+function applyBorderRadius() {
+  const elementId = 'element-id'; // Replace with the actual element ID
+  const radius = document.getElementById('border-radius-input').value;
+  sendStylingChange(elementId, 'border-radius', radius);
 }
 
-// Add event listeners
-document.getElementById('urlForm').addEventListener('submit', handleUrlFormSubmit);
-document.getElementById('stylingForm').addEventListener('submit', handleStylingFormSubmit);
+// Additional functions in maxconversion.js if you have other functionalities
+
+// ...
