@@ -13,7 +13,7 @@
     <input type="text" id="urlInput" required>
     <button type="submit">Load Screenshot</button>
   </form>
-  <div id="screenshotContainer"></div>
+  <img id="screenshot" style="display: none;">
   <div id="stylingForm">
     <h2>Styling Options</h2>
     <label for="styleSelect">Select Style:</label>
@@ -28,68 +28,54 @@
   </div>
   <div id="successMessage" style="display: none;">Styling changes applied successfully!</div>
 
-  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <script>
-    // Capture the screenshot of the entered URL
-    async function captureScreenshot() {
-      const url = document.getElementById('urlInput').value;
-      const screenshotContainer = document.getElementById('screenshotContainer');
-      const iframe = document.createElement('iframe');
-      iframe.src = url;
-      screenshotContainer.innerHTML = '';
-      screenshotContainer.appendChild(iframe);
+    let selectedElementPath;
 
-      iframe.onload = async () => {
-        const canvas = await html2canvas(iframe.contentWindow.document.body);
-        screenshotContainer.innerHTML = '';
-        screenshotContainer.appendChild(canvas);
-        
-        // Enable element selection on the rendered webpage content
-        const elements = canvas.getElementsByTagName('*');
-        for (let i = 0; i < elements.length; i++) {
-          elements[i].addEventListener('click', handleElementSelection);
-        }
-      };
+    // Capture the screenshot of the entered URL
+    async function captureScreenshot(event) {
+      event.preventDefault();
+
+      const url = document.getElementById('urlInput').value;
+      const response = await fetch('/get-screenshot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      });
+      const { screenshot } = await response.json();
+
+      const screenshotImg = document.getElementById('screenshot');
+      screenshotImg.src = 'data:image/png;base64,' + screenshot;
+      screenshotImg.style.display = 'block';
     }
 
     // Handle element selection and apply styling changes
-    function handleElementSelection(event) {
-      const selectedElement = event.target;
-
-      // Apply styling changes based on selected option and hex code
+    async function applyStyling() {
       const styleSelect = document.getElementById('styleSelect');
       const selectedStyle = styleSelect.value;
       const hexInput = document.getElementById('hexInput');
       const hexCode = hexInput.value;
 
-      selectedElement.style[selectedStyle] = hexCode;
+      const response = await fetch('/update-styling', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: document.getElementById('urlInput').value, elementPath: selectedElementPath, style: selectedStyle, value: hexCode })
+      });
 
-      // Send a message to the backend server to apply the styling changes on the live site
-      // You need to implement the logic to send a request to the backend server here
-
-      // Optional: Display a success message
-      const successMessage = document.getElementById('successMessage');
-      successMessage.style.display = 'block';
-      setTimeout(() => {
-        successMessage.style.display = 'none';
-      }, 3000);
+      if (response.ok) {
+        // Optional: Display a success message
+        const successMessage = document.getElementById('successMessage');
+        successMessage.style.display = 'block';
+        setTimeout(() => {
+          successMessage.style.display = 'none';
+        }, 3000);
+      }
     }
 
     // Add an event listener to the form submission
-    document.getElementById('urlForm').addEventListener('submit', function (event) {
-      event.preventDefault();
-      captureScreenshot();
-    });
+    document.getElementById('urlForm').addEventListener('submit', captureScreenshot);
 
     // Add an event listener to the Apply Styling button
-    document.getElementById('applyStylingBtn').addEventListener('click', function () {
-      const screenshotContainer = document.getElementById('screenshotContainer');
-      const canvas = screenshotContainer.getElementsByTagName('canvas')[0];
-      if (canvas) {
-        const selectedElement = canvas.parentElement;
-        handleElementSelection({ target: selectedElement });
-      }
-    });
+    document.getElementById('applyStylingBtn').addEventListener('click', applyStyling);
   </script>
 </body>
 </html>
