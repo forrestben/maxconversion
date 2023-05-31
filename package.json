@@ -2,7 +2,7 @@
   "name": "maxconversion",
   "version": "1.0.0",
   "description": "Description of your application",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
     "start": "node server.js"
   },
