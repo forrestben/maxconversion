@@ -4,7 +4,7 @@
   "description": "Description of your application",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node index.js"
   },
   "author": "Forrest McCall",
   "license": "MIT",
