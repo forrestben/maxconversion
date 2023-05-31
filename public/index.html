@@ -33,12 +33,12 @@
     // Capture the screenshot and render the webpage content
     async function captureScreenshot() {
       const url = document.getElementById('urlInput').value;
-      const response = await fetch(url);
-      const htmlContent = await response.text();
-
       const screenshotContainer = document.getElementById('screenshotContainer');
-      screenshotContainer.innerHTML = htmlContent;
-
+      
+      const canvas = await html2canvas(document.body);
+      screenshotContainer.innerHTML = '';
+      screenshotContainer.appendChild(canvas);
+      
       // Enable element selection on the rendered webpage content
       const elements = screenshotContainer.getElementsByTagName('*');
       for (let i = 0; i < elements.length; i++) {
