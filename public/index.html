@@ -14,18 +14,14 @@
     <button type="submit">Load Screenshot</button>
   </form>
   <div id="screenshotContainer">
-    <iframe id="screenshotFrame" sandbox="allow-scripts allow-same-origin"></iframe>
+    <img id="screenshotImg" src="" alt="Screenshot">
   </div>
   <div id="stylingForm">
     <h2>Styling Options</h2>
-    <label for="styleSelect">Select Style:</label>
-    <select id="styleSelect">
-      <option value="backgroundColor">Background Color</option>
-      <option value="color">Color</option>
-      <option value="borderRadius">Border Radius</option>
-    </select>
-    <label for="hexInput">Enter Hex Code:</label>
-    <input type="text" id="hexInput">
+    <label for="elementIdInput">Element ID:</label>
+    <input type="text" id="elementIdInput" readonly>
+    <label for="backgroundColorInput">Background Color:</label>
+    <input type="text" id="backgroundColorInput" placeholder="Enter Hex Code">
     <button id="applyStylingBtn">Apply Styling</button>
   </div>
 
@@ -34,19 +30,45 @@
     // Capture the screenshot and enable element selection
     function captureScreenshot() {
       const url = document.getElementById('urlInput').value;
-      const screenshotFrame = document.getElementById('screenshotFrame');
+      const screenshotImg = document.getElementById('screenshotImg');
 
-      screenshotFrame.src = url;
+      html2canvas(document.body).then(canvas => {
+        const screenshotUrl = canvas.toDataURL('image/png');
+
+        screenshotImg.src = screenshotUrl;
+
+        screenshotImg.addEventListener('click', function (event) {
+          const selectedElement = event.target;
+          const elementIdInput = document.getElementById('elementIdInput');
+          elementIdInput.value = selectedElement.id;
+        });
+      });
     }
 
-    // Handle element selection and apply styling changes
-    function handleElementSelection(selectedElement) {
-      const styleSelect = document.getElementById('styleSelect');
-      const selectedStyle = styleSelect.value;
-      const hexInput = document.getElementById('hexInput');
-      const hexCode = hexInput.value;
+    // Apply styling changes on the live site
+    function applyStyling() {
+      const elementId = document.getElementById('elementIdInput').value;
+      const backgroundColor = document.getElementById('backgroundColorInput').value;
 
-      selectedElement.style[selectedStyle] = hexCode;
+      // Send a request to the backend server to update the element's background color
+      fetch('/update-styling', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ elementId, backgroundColor }),
+      })
+      .then(response => {
+        if (response.ok) {
+          alert('Styling changes applied successfully!');
+        } else {
+          alert('Failed to apply styling changes. Please try again.');
+        }
+      })
+      .catch(error => {
+        console.error('An error occurred while applying styling changes:', error);
+        alert('An error occurred while applying styling changes. Please try again.');
+      });
     }
 
     // Add an event listener to the form submission
@@ -56,20 +78,9 @@
     });
 
     // Add an event listener to the Apply Styling button
-document.getElementById('applyStylingBtn').addEventListener('click', function () {
-  const screenshotFrame = document.getElementById('screenshotFrame');
-
-  screenshotFrame.contentWindow.document.addEventListener('click', function (event) {
-    event.preventDefault(); // Prevent navigation
-
-    const selectedElement = event.target;
-
-    if (selectedElement) {
-      handleElementSelection(selectedElement);
-    }
-  });
-});
-
+    document.getElementById('applyStylingBtn').addEventListener('click', function () {
+      applyStyling();
+    });
   </script>
 </body>
 </html>
