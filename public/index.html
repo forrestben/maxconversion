@@ -28,7 +28,6 @@
     <input type="text" id="hexInput">
     <button id="applyStylingBtn">Apply Styling</button>
   </div>
-  <p id="successMessage"></p>
 
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <script>
@@ -83,29 +82,6 @@
       }
     });
     
-    // Add an event listener to the "Apply Styling" button
-document.getElementById('applyStylingBtn').addEventListener('click', () => {
-  // Get the selected element ID
-  const selectedElementId = document.getElementById('selectedElement').value;
-
-  // Get the selected styling values
-  const backgroundColor = document.getElementById('backgroundColor').value;
-  const textColor = document.getElementById('textColor').value;
-  const borderRadius = document.getElementById('borderRadius').value;
-
-  // Create an object with the selected styling properties
-  const styling = {
-    backgroundColor,
-    color: textColor,
-    borderRadius: `${borderRadius}px`,
-  };
-
-  // Send the styling message to the parent window
-  window.parent.postMessage({ type: 'styling', elementId: selectedElementId, styling }, '*');
-
-  // Display a success message
-  document.getElementById('successMessage').textContent = 'Styling applied successfully!';
-});
 
   </script>
 </body>
