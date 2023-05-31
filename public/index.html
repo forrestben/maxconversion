@@ -37,6 +37,18 @@
       screenshotFrame.src = url;
     }
 
+    // Disable click events within the iframe
+    function disableIframeClicks(event) {
+      const iframeDocument = event.target.contentDocument;
+      const elements = iframeDocument.querySelectorAll('button, input[type="submit"], a, img');
+
+      elements.forEach((element) => {
+        element.addEventListener('click', (event) => {
+          event.preventDefault();
+        });
+      });
+    }
+
     // Handle element selection and apply styling changes
     function handleElementSelection(event) {
       const selectedElementId = event.target.value;
@@ -80,6 +92,9 @@
           console.error('Failed to apply styling changes:', error);
         });
     });
+
+    // Add an event listener to the iframe load event
+    document.getElementById('screenshotFrame').addEventListener('load', disableIframeClicks);
   </script>
 </body>
 </html>
