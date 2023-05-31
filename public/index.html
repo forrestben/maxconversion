@@ -46,28 +46,32 @@
         screenshotFrame.contentWindow.document.addEventListener('click', handleElementSelection);
       };
     }
+// Handle element selection and apply styling changes within the iframe
+function handleElementSelection(event) {
+  event.preventDefault(); // Prevent the button from triggering its default behavior
 
-    // Handle element selection and apply styling changes within the iframe
-    function handleElementSelection(event) {
-      const selectedElement = event.target;
+  const selectedElement = event.target;
 
-      // Apply styling changes based on selected option and hex code
-      const selectedStyle = styleSelect.value;
-      const hexCode = hexInput.value;
+  // Apply styling changes based on selected option and hex code
+  const styleSelect = document.getElementById('styleSelect');
+  const selectedStyle = styleSelect.value;
+  const hexInput = document.getElementById('hexInput');
+  const hexCode = hexInput.value;
 
-      selectedElement.style[selectedStyle] = hexCode;
+  selectedElement.style[selectedStyle] = hexCode;
 
-      // Send a message to the parent window to apply the styling changes
-      window.parent.postMessage(
-        {
-          type: 'stylingChange',
-          elementId: selectedElement.id,
-          style: selectedStyle,
-          value: hexCode,
-        },
-        '*'
-      );
-    }
+  // Send a message to the parent window to apply the styling changes
+  window.parent.postMessage(
+    {
+      type: 'stylingChange',
+      elementId: selectedElement.id,
+      style: selectedStyle,
+      value: hexCode,
+    },
+    '*'
+  );
+}
+
 
     // Add an event listener to the form submission
     document.getElementById('urlForm').addEventListener('submit', function (event) {
