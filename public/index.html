@@ -1,8 +1,9 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html>
 <head>
   <title>A/B Testing Interface</title>
   <style>
+   
     /* Add necessary styles */
     #screenshotFrame {
       width: 100%;
@@ -18,7 +19,7 @@
     <button type="submit">Load Screenshot</button>
   </form>
   <div id="screenshotContainer">
-    <iframe id="screenshotFrame" sandbox="allow-same-origin allow-scripts"></iframe>
+    <iframe id="screenshotFrame" sandbox="allow-same-origin"></iframe>
   </div>
   <div id="stylingForm">
     <h2>Styling Options</h2>
@@ -43,32 +44,22 @@
       screenshotFrame.src = url;
 
       screenshotFrame.onload = function () {
-        screenshotFrame.contentWindow.document.addEventListener('click', handleElementSelection);
+        const iframeDocument = screenshotFrame.contentDocument || screenshotFrame.contentWindow.document;
+        iframeDocument.addEventListener('click', function (event) {
+          event.preventDefault();
+          handleElementSelection(event.target);
+        });
       };
     }
 
-    // Handle element selection and apply styling changes within the iframe
-    function handleElementSelection(event) {
-      const selectedElement = event.target;
-
-      // Apply styling changes based on selected option and hex code
+    // Handle element selection and apply styling changes
+    function handleElementSelection(selectedElement) {
       const styleSelect = document.getElementById('styleSelect');
       const selectedStyle = styleSelect.value;
       const hexInput = document.getElementById('hexInput');
       const hexCode = hexInput.value;
 
       selectedElement.style[selectedStyle] = hexCode;
-
-      // Send a message to the parent window to apply the styling changes
-      window.parent.postMessage(
-        {
-          type: 'stylingChange',
-          elementId: selectedElement.id,
-          style: selectedStyle,
-          value: hexCode,
-        },
-        '*'
-      );
     }
 
     // Add an event listener to the form submission
@@ -80,9 +71,11 @@
     // Add an event listener to the Apply Styling button
     document.getElementById('applyStylingBtn').addEventListener('click', function () {
       const screenshotFrame = document.getElementById('screenshotFrame');
-      const selectedElement = screenshotFrame.contentWindow.document.querySelector(':hover');
+      const iframeDocument = screenshotFrame.contentDocument || screenshotFrame.contentWindow.document;
+      const selectedElement = iframeDocument.querySelector(':hover');
+
       if (selectedElement) {
-        handleElementSelection({ target: selectedElement });
+        handleElementSelection(selectedElement);
       }
     });
   </script>
