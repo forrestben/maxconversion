@@ -4,6 +4,10 @@
   <title>A/B Testing Interface</title>
   <style>
     /* Add necessary styles */
+    #screenshotFrame {
+      width: 100%;
+      height: 600px; /* Adjust the height as needed */
+    }
   </style>
 </head>
 <body>
@@ -14,8 +18,7 @@
     <button type="submit">Load Screenshot</button>
   </form>
   <div id="screenshotContainer">
-    <iframe id="screenshotFrame" sandbox="allow-same-origin" style="width: 100%; height: 600px;"></iframe>
-
+    <iframe id="screenshotFrame" sandbox="allow-same-origin"></iframe>
   </div>
   <div id="stylingForm">
     <h2>Styling Options</h2>
@@ -31,15 +34,11 @@
   </div>
 
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-  <script src="app.js"></script>
   <script>
-    const screenshotFrame = document.getElementById('screenshotFrame');
-    const styleSelect = document.getElementById('styleSelect');
-    const hexInput = document.getElementById('hexInput');
-
     // Capture the screenshot and enable element selection
     function captureScreenshot() {
       const url = document.getElementById('urlInput').value;
+      const screenshotFrame = document.getElementById('screenshotFrame');
 
       screenshotFrame.src = url;
 
@@ -47,32 +46,30 @@
         screenshotFrame.contentWindow.document.addEventListener('click', handleElementSelection);
       };
     }
-// Handle element selection and apply styling changes within the iframe
-function handleElementSelection(event) {
-  event.preventDefault(); // Prevent the button from triggering its default behavior
 
-  const selectedElement = event.target;
+    // Handle element selection and apply styling changes within the iframe
+    function handleElementSelection(event) {
+      const selectedElement = event.target;
 
-  // Apply styling changes based on selected option and hex code
-  const styleSelect = document.getElementById('styleSelect');
-  const selectedStyle = styleSelect.value;
-  const hexInput = document.getElementById('hexInput');
-  const hexCode = hexInput.value;
+      // Apply styling changes based on selected option and hex code
+      const styleSelect = document.getElementById('styleSelect');
+      const selectedStyle = styleSelect.value;
+      const hexInput = document.getElementById('hexInput');
+      const hexCode = hexInput.value;
 
-  selectedElement.style[selectedStyle] = hexCode;
+      selectedElement.style[selectedStyle] = hexCode;
 
-  // Send a message to the parent window to apply the styling changes
-  window.parent.postMessage(
-    {
-      type: 'stylingChange',
-      elementId: selectedElement.id,
-      style: selectedStyle,
-      value: hexCode,
-    },
-    '*'
-  );
-}
-
+      // Send a message to the parent window to apply the styling changes
+      window.parent.postMessage(
+        {
+          type: 'stylingChange',
+          elementId: selectedElement.id,
+          style: selectedStyle,
+          value: hexCode,
+        },
+        '*'
+      );
+    }
 
     // Add an event listener to the form submission
     document.getElementById('urlForm').addEventListener('submit', function (event) {
@@ -82,6 +79,7 @@ function handleElementSelection(event) {
 
     // Add an event listener to the Apply Styling button
     document.getElementById('applyStylingBtn').addEventListener('click', function () {
+      const screenshotFrame = document.getElementById('screenshotFrame');
       const selectedElement = screenshotFrame.contentWindow.document.querySelector(':hover');
       if (selectedElement) {
         handleElementSelection({ target: selectedElement });
