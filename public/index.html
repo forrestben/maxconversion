@@ -1,83 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>A/B Testing Interface</title>
+  <meta charset="UTF-8">
+  <title>MaxConversion</title>
   <style>
-    /* Add necessary styles */
-    #screenshot {
-      display: none;
-    }
+    /* Add your styles here */
   </style>
 </head>
 <body>
-  <h1>A/B Testing Interface</h1>
-  <form id="urlForm">
-    <label for="urlInput">Enter URL:</label>
-    <input type="text" id="urlInput" required>
-    <button type="submit">Load Screenshot</button>
-  </form>
-  <img id="screenshot" />
-  <div id="stylingForm">
-    <h2>Styling Options</h2>
-    <label for="styleSelect">Select Style:</label>
-    <select id="styleSelect">
-      <option value="backgroundColor">Background Color</option>
-      <!-- You can add more styling options here -->
-    </select>
-    <label for="hexInput">Enter Hex Code:</label>
-    <input type="text" id="hexInput">
-    <button id="applyStylingBtn">Apply Styling</button>
-  </div>
-  <div id="successMessage" style="display: none;">Styling changes applied successfully!</div>
+  <h1>MaxConversion</h1>
+
+  <input id="url-input" type="text" placeholder="Enter URL">
+  <input id="selector-input" type="text" placeholder="Enter element selector">
+  <input id="style-name-input" type="text" placeholder="Enter style name">
+  <input id="style-value-input" type="text" placeholder="Enter style value">
+  <button id="apply-button">Apply Styling</button>
 
   <script>
-    let selectedElementPath;
+    document.getElementById('apply-button').addEventListener('click', () => {
+      // Extract the input values
+      const url = document.getElementById('url-input').value;
+      const selector = document.getElementById('selector-input').value;
+      const styleName = document.getElementById('style-name-input').value;
+      const styleValue = document.getElementById('style-value-input').value;
 
-    // Capture the screenshot of the entered URL
-    async function captureScreenshot(event) {
-      event.preventDefault();
+      // Create the style object
+      const style = {
+        [styleName]: styleValue
+      };
 
-      const url = document.getElementById('urlInput').value;
-      const response = await fetch('/get-screenshot', {
+      // Call the API endpoint
+      fetch('https://maxconversion.forrestben.repl.co/apply-style', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url })
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ selector, style })
+      }).then(response => {
+        if (!response.ok) {
+          // Show an error message if the request failed
+          alert('Failed to apply style. Please try again.');
+        }
       });
-      const { screenshot } = await response.json();
-
-      const screenshotImg = document.getElementById('screenshot');
-      screenshotImg.src = 'data:image/png;base64,' + screenshot;
-      screenshotImg.style.display = 'block';
-    }
-
-    // Handle element selection and apply styling changes
-    async function applyStyling() {
-      const styleSelect = document.getElementById('styleSelect');
-      const selectedStyle = styleSelect.value;
-      const hexInput = document.getElementById('hexInput');
-      const hexCode = hexInput.value;
-
-      const response = await fetch('/update-styling', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: document.getElementById('urlInput').value, elementPath: selectedElementPath, style: selectedStyle, value: hexCode })
-      });
-
-      if (response.ok) {
-        // Optional: Display a success message
-        const successMessage = document.getElementById('successMessage');
-        successMessage.style.display = 'block';
-        setTimeout(() => {
-          successMessage.style.display = 'none';
-        }, 3000);
-      }
-    }
-
-    // Add an event listener to the form submission
-    document.getElementById('urlForm').addEventListener('submit', captureScreenshot);
-
-    // Add an event listener to the Apply Styling button
-    document.getElementById('applyStylingBtn').addEventListener('click', applyStyling);
+    });
   </script>
 </body>
 </html>
