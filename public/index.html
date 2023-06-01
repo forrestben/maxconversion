@@ -30,6 +30,7 @@
     <button id="applyStylingBtn">Apply Styling</button>
   </div>
   <div id="successMessage" style="display: none;">Styling changes applied successfully!</div>
+  <iframe id="live-external-site" style="display: none;"></iframe>
 
   <script>
     let selectedElementPath;
@@ -49,6 +50,31 @@
       const screenshotImg = document.getElementById('screenshot');
       screenshotImg.src = 'data:image/png;base64,' + screenshot;
       screenshotImg.style.display = 'block';
+
+      // Fetch overlay HTML
+      const overlayResponse = await fetch('/get-overlay', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      });
+      const { html } = await overlayResponse.json();
+
+      // Create a div to contain the overlay
+      const overlayDiv = document.createElement('div');
+      overlayDiv.innerHTML = html;
+      overlayDiv.style.position = 'absolute';
+      overlayDiv.style.width = '100%';
+      overlayDiv.style.height = '100%';
+      overlayDiv.style.top = '0';
+      overlayDiv.style.left = '0';
+      overlayDiv.style.pointerEvents = 'none';
+
+      // Add the overlay to the body
+      document.body.appendChild(overlayDiv);
+
+      overlayDiv.addEventListener('click', function(event) {
+        selectedElementPath = event.path.map(element => element.tagName).join(' > ');
+      });
     }
 
     // Handle element selection and apply styling changes
@@ -65,6 +91,14 @@
       });
 
       if (response.ok) {
+        const iframe = document.getElementById('live-external-site');
+        iframe.contentWindow.postMessage({
+          type: 'stylingChange',
+          elementPath: selectedElementPath,
+          style: selectedStyle,
+          value: hexCode,
+        }, '*');
+
         // Optional: Display a success message
         const successMessage = document.getElementById('successMessage');
         successMessage.style.display = 'block';
