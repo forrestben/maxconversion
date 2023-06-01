@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>A/B Testing Interface</title>
+  <style>
+    /* Add necessary styles */
+    #screenshot {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>A/B Testing Interface</h1>
+  <form id="urlForm">
+    <label for="urlInput">Enter URL:</label>
+    <input type="text" id="urlInput" required>
+    <button type="submit">Load Screenshot</button>
+  </form>
+  <img id="screenshot" />
+  <div id="stylingForm">
+    <h2>Styling Options</h2>
+    <label for="styleSelect">Select Style:</label>
+    <select id="styleSelect">
+      <option value="backgroundColor">Background Color</option>
+      <!-- You can add more styling options here -->
+    </select>
+    <label for="hexInput">Enter Hex Code:</label>
+    <input type="text" id="hexInput">
+    <button id="applyStylingBtn">Apply Styling</button>
+  </div>
+  <div id="successMessage" style="display: none;">Styling changes applied successfully!</div>
+
+  <script>
+    let selectedElementPath;
+
+    // Capture the screenshot of the entered URL
+    async function captureScreenshot(event) {
+      event.preventDefault();
+
+      const url = document.getElementById('urlInput').value;
+      const response = await fetch('/get-screenshot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      });
+      const { screenshot } = await response.json();
+
+      const screenshotImg = document.getElementById('screenshot');
+      screenshotImg.src = 'data:image/png;base64,' + screenshot;
+      screenshotImg.style.display = 'block';
+    }
+
+    // Handle element selection and apply styling changes
+    async function applyStyling() {
+      const styleSelect = document.getElementById('styleSelect');
+      const selectedStyle = styleSelect.value;
+      const hexInput = document.getElementById('hexInput');
+      const hexCode = hexInput.value;
+
+      const response = await fetch('/update-styling', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: document.getElementById('urlInput').value, elementPath: selectedElementPath, style: selectedStyle, value: hexCode })
+      });
+
+      if (response.ok) {
+        // Optional: Display a success message
+        const successMessage = document.getElementById('successMessage');
+        successMessage.style.display = 'block';
+        setTimeout(() => {
+          successMessage.style.display = 'none';
+        }, 3000);
+      }
+    }
+
+    // Add an event listener to the form submission
+    document.getElementById('urlForm').addEventListener('submit', captureScreenshot);
+
+    // Add an event listener to the Apply Styling button
+    document.getElementById('applyStylingBtn').addEventListener('click', applyStyling);
+  </script>
+</body>
+</html>
