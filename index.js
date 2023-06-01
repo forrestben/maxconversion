@@ -1,12 +1,7 @@
 const express = require('express');
-const cors = require('cors');
-const path = require('path');
-const puppeteer = require('puppeteer');
-
 const app = express();
-
-// Enable CORS for all routes
-app.use(cors());
+const path = require('path');
+const WebSocket = require('ws');
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -15,35 +10,37 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.post('/get-screenshot', async (req, res) => {
-  const { url } = req.body;
+// WebSocket connection handling
+const wss = new WebSocket.Server({ noServer: true });
+let externalSocket = null;
 
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-  await page.goto(url);
-  const screenshot = await page.screenshot({ encoding: 'base64' });
-
-  await browser.close();
-
-  res.status(200).json({ screenshot });
+// Handle WebSocket upgrade request
+app.on('upgrade', (request, socket, head) => {
+  wss.handleUpgrade(request, socket, head, (socket) => {
+    wss.emit('connection', socket, request);
+  });
 });
 
-app.post('/update-styling', async (req, res) => {
-  const { url, elementPath, style, value } = req.body;
+// WebSocket connection handling
+wss.on('connection', (socket) => {
+  // Store the external socket reference
+  externalSocket = socket;
+});
 
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-  await page.goto(url);
-  await page.evaluate((elementPath, style, value) => {
-    const element = document.querySelector(elementPath);
-    if (element) {
-      element.style[style] = value;
-    }
-  }, elementPath, style, value);
+app.post('/apply-style', (req, res) => {
+  const { selector, style } = req.body;
 
-  await browser.close();
+  // Check if the selector and style were provided
+  if (!selector || !style) {
+    return res.status(400).send({ error: 'Invalid request body' });
+  }
 
-  res.status(200).json({ message: 'Styling changes applied successfully' });
+  // Send the styling change to the external site
+  if (externalSocket && externalSocket.readyState === WebSocket.OPEN) {
+    externalSocket.send(JSON.stringify({ type: 'stylingChange', selector, style }));
+  }
+
+  res.send({ status: 'ok' });
 });
 
 const port = process.env.PORT || 3000;
