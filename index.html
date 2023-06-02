@@ -4,45 +4,51 @@
     <title>Conversion Rate Optimization App</title>
     <style>
         /* Include some basic styling here */
-        #screenshot {
-            max-width: 100%;
+        #c {
+            border: 1px solid #ccc;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
     <script>
-        window.onload = function() {
-            var urlInput = document.getElementById('url');
-            var colorInput = document.getElementById('color');
-            var applyButton = document.getElementById('apply');
-            
-            applyButton.onclick = function() {
-                var url = urlInput.value;
-                var color = colorInput.value;
-                
-                // Replace this URL with the URL of your back-end
-                var backendUrl = 'https://your-backend.com/api/changes';
+        var canvas, rect, isDown, urlInput, colorInput, applyButton, loadImageButton;
 
-                fetch(backendUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        url: url,
-                        color: color,
-                        // Here you'd include data about the selected region, which you'd get from your region-selecting library
-                    })
-                }).then(response => response.json())
-                  .then(data => {
-                      console.log(data);
-                  });
+        window.onload = function() {
+            urlInput = document.getElementById('url');
+            colorInput = document.getElementById('color');
+            applyButton = document.getElementById('apply');
+            loadImageButton = document.getElementById('load-image');
+
+            canvas = new fabric.Canvas('c', { selection: false });
+
+            loadImageButton.onclick = function() {
+                var url = urlInput.value;
+
+                // Replace this URL with the URL of your screenshot endpoint
+                var screenshotUrl = 'https://your-backend.com/api/screenshot';
+
+                fetch(screenshotUrl + '?url=' + encodeURIComponent(url))
+                    .then(response => response.blob())
+                    .then(blob => {
+                        var imgElement = document.getElementById('my-image');
+                        imgElement.src = URL.createObjectURL(blob);
+                        imgElement.onload = function() {
+                            var imgInstance = new fabric.Image(imgElement, { left: 0, top: 0 });
+                            canvas.clear();
+                            canvas.add(imgInstance);
+                        };
+                    });
             };
+
+            /* ... Rest of your code ... */
         };
     </script>
 </head>
 <body>
     <input type="text" id="url" placeholder="Enter a URL">
     <input type="color" id="color">
+    <button id="load-image">Load Image</button>
     <button id="apply">Apply Changes</button>
-    <img id="screenshot" src="screenshot.jpg"> <!-- Put the URL of the screenshot image here -->
+    <img id="my-image" style="display:none;">
+    <canvas id="c"></canvas>
 </body>
 </html>
