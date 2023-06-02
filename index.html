@@ -1,64 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>MaxConversion</title>
-  <style>
-    /* Add your styles here */
-  </style>
+    <title>Conversion Rate Optimization App</title>
+    <style>
+        /* Include some basic styling here */
+        #screenshot {
+            max-width: 100%;
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            var urlInput = document.getElementById('url');
+            var colorInput = document.getElementById('color');
+            var applyButton = document.getElementById('apply');
+            
+            applyButton.onclick = function() {
+                var url = urlInput.value;
+                var color = colorInput.value;
+                
+                // Replace this URL with the URL of your back-end
+                var backendUrl = 'https://your-backend.com/api/changes';
+
+                fetch(backendUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        url: url,
+                        color: color,
+                        // Here you'd include data about the selected region, which you'd get from your region-selecting library
+                    })
+                }).then(response => response.json())
+                  .then(data => {
+                      console.log(data);
+                  });
+            };
+        };
+    </script>
 </head>
 <body>
-  <h1>MaxConversion</h1>
-
-  <input id="url-input" type="text" placeholder="Enter URL">
-  <button id="screenshot-button">Take Screenshot</button>
-  <canvas id="screenshot-canvas" width="500" height="500"></canvas>
-
-  <script>
-    document.getElementById('screenshot-button').addEventListener('click', () => {
-      // Extract the URL from the input
-      const url = document.getElementById('url-input').value;
-
-      // Create a new browser instance
-      const browser = await puppeteer.launch();
-
-      // Create a new page
-      const page = await browser.newPage();
-
-      // Navigate to the URL
-      await page.goto(url);
-
-      // Take a screenshot of the page
-      const screenshot = await page.screenshot({
-        width: 500,
-        height: 500
-      });
-
-      // Close the browser
-      await browser.close();
-
-      // Display the screenshot on the canvas
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(screenshot, 0, 0);
-    });
-
-    // Handle mouse clicks on the canvas
-    canvas.addEventListener('click', (event) => {
-      // Get the coordinates of the mouse click
-      const x = event.clientX;
-      const y = event.clientY;
-
-      // Get the element at the clicked coordinates
-      const element = document.elementFromPoint(x, y);
-
-      // If the element is an HTML element, get its selector
-      if (element instanceof HTMLElement) {
-        const selector = element.tagName.toLowerCase();
-
-        // Display the selector in the console
-        console.log(selector);
-      }
-    });
-  </script>
+    <input type="text" id="url" placeholder="Enter a URL">
+    <input type="color" id="color">
+    <button id="apply">Apply Changes</button>
+    <img id="screenshot" src="screenshot.jpg"> <!-- Put the URL of the screenshot image here -->
 </body>
 </html>
